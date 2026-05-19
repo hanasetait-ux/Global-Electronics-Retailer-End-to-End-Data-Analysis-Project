@@ -1,0 +1,75 @@
+select * from Customers
+select * from Exchange_Rates
+select * from Products
+select * from Sales
+select * from Stores
+
+
+UPDATE Products
+SET 
+[Unit_Cost_USD] = TRIM(REPLACE(REPLACE(
+[Unit_Cost_USD], '$', ''), ',', '')),
+[Unit_Price_USD] = TRIM(REPLACE(REPLACE(
+[Unit_Price_USD], '$', ''), ',', ''));
+
+ALTER TABLE Products
+ALTER COLUMN [Unit_Price_USD] DECIMAL(19,4);
+
+ALTER TABLE Products
+ALTER COLUMN [Unit_Cost_USD] DECIMAL(19,4);
+
+
+SELECT 
+    TRIM("Product_Name") AS Cleaned_ProductName,
+    TRIM(Brand) AS Cleaned_Brand,
+    UPPER(Color) AS Standardized_Color -- 
+FROM Products;
+
+SELECT 
+    COUNT(*) - COUNT("Order_Number") AS Missing_Orders,
+    COUNT(*) - COUNT("Order_Date") AS Missing_Dates,
+    COUNT(*) - COUNT("CustomerKey") AS Missing_Customers
+FROM Sales;
+
+
+
+SELECT Name, City 
+FROM Customers 
+WHERE Name IS NULL OR City IS NULL;
+
+SELECT 
+    TRIM("Product_Name") AS Cleaned_ProductName,
+    TRIM(Brand) AS Cleaned_Brand,
+    UPPER(Color) AS Standardized_Color -- 
+FROM Products;
+
+
+SELECT "Order_Number",
+COALESCE(CAST("Delivery_Date" AS VARCHAR),'Pending') AS Delivery_Status
+FROM Sales;
+
+SELECT * FROM Sales 
+WHERE "Delivery_Date" < "Order_Date";
+
+SELECT "Order_Number", "Line_Item", COUNT(*)
+FROM Sales
+GROUP BY "Order_Number", "Line_Item"
+HAVING COUNT(*) > 1;
+
+SELECT DISTINCT s.ProductKey
+FROM Sales s
+LEFT JOIN Products p ON s.ProductKey = p.ProductKey
+WHERE p.ProductKey IS NULL;
+
+
+SELECT 
+    'Sales' AS Table_Name,
+    COUNT(*) AS Total_Rows,
+    COUNT(DISTINCT "Order_Number") AS Unique_Orders,
+    SUM(CASE WHEN "Delivery_Date" IS NULL THEN 1 ELSE 0 END) AS Pending_Deliveries
+FROM Sales;
+
+
+
+
+
